@@ -12,5 +12,4 @@ urls = (
     "/get_thread_info", "ajax_front.GetThreadInfo",
     "/direct_add", "ajax_front.DirectAdd",
     "/get_top", "ajax_front.GetTop",
-    "/images/hs\.jpg", "wuliao.RandomPic"
 )
