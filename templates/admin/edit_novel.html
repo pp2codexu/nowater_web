@@ -1,0 +1,14 @@
+<%inherit file="base.html"/>
+
+<%def name="right()">
+    <div class="sub_title">修改小说</div>
+    <div>
+    <form name="main" method="post" target="">
+    % if not form.valid:
+        <p class="error">Try again</p>
+    % endif
+        ${form.render()}
+    <input type="hidden" value="${id}" name="id" />
+    <input type="submit" value="提交" style="width: 100px"/> 
+    </div>
+</%def>

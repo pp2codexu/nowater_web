@@ -1,0 +1,60 @@
+<!doctype html public "-/w3c/dtd html 4.01/en"
+"http://www.w3.org/tr/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="content-Type" content="text/html; charset=utf-8" />
+    <title>浮云脱水小说站 - 实时脱水、只看楼主，给你最好最全的脱水小说${self.title()}</title>
+    <meta name="author" content="Piglei,piglei2007@gmail.com">
+    <meta name="keywords" content="最新脱水小说 百度贴吧只看楼主 天涯只看楼主 豆瓣只看楼主 脱水小说 python web.py">
+    <meta name="description" content="每日添加、自动更新的脱水小说站，支持百度贴吧、天涯社区、豆瓣社区脱水小说，提供实时脱水（只看楼主）功能" />
+    <link href="/static/css/style.css?v=5" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/static/js/jquery-1.4.3.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/static/js/common.js?v=9"></script>
+    ${self.head()}
+</head>
+<body>
+        <div id="banner_wrapper">
+            <div id="banner">
+                <h1><a class="b_title" href="/">浮云脱水小说站</a></h1>
+                <div class="banner_info">
+                    提供实时更新的百度贴吧、天涯社区、豆瓣社区脱水小说，提供实时脱水（只看楼主）功能<br/>
+                    如果你喜欢这，就推荐给你的朋友们吧 :)
+                </div>
+                <div class="b_menu">
+                    <div class="b_menu_links">
+                        <a href="/">实时脱水</a> | <a href="/checkall">看看别的</a>
+                    </div>                
+                    <form action="/novel/search" method="GET">
+                        <input type="text" name="keyword" class="search_key text" /> <input type="submit" value="搜索" />
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="main">
+            <div id="middle">
+            ${self.main()}
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div id="footer">
+            <div class="links">
+                <a href="http://www.zlovezl.cn/articles/33/">需求及bug反馈</a> | 
+                <a href="http://www.zlovezl.cn">作者的BLOG</a> | 
+                <a href="http://simple-is-better.com/">python.cn(新闻,招聘,导航)</a> | 
+                <a href="http://www.python.org">Python</a> | 
+                <a href="http://webpy.org">Web.py</a>
+            </div>
+            &copy; 2010 <a href="http://zlovezl.cn" target="_blank">Piglei</a> 浮云脱水小说站. All rights reserved.
+        </div>        
+    ${self.bottom()}
+    <div style="display: none">
+        <script src="http://s17.cnzz.com/stat.php?id=2702233&web_id=2702233" language="JavaScript"></script>
+    </div>
+</body>
+</html>
+
+<%def name="head()"></%def>
+<%def name="main()"></%def>
+<%def name="title()"></%def>
+<%def name="bottom()"></%def>

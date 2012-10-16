@@ -1,0 +1,121 @@
+<%inherit file="base.html"/>
+<%!
+    import constants
+    from lib import mako_filter as mf
+
+    MAX_TAGS = 100
+%>
+
+<%def name="head()">
+    <script type="text/javascript" src="/static/js/jquery-ui-1.8.7.custom.min.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            $('#hidden_tags_a').bind("click", function(){
+                $(this).hide();
+                $('#hidden_tags').fadeIn(); 
+            });     
+        });
+    </script>
+</%def>
+
+<%def name="main()">
+    <div id="tabs">
+        <ul>
+            <li><a href="/get_top?type=latest">新书上架</a></li>
+            <li><a href="/get_top?type=view">热度排行</a></li>
+            <li><a href="#tabs-3">更多</a></li>
+        </ul>
+        <div id="tabs-1">
+        </div>
+        <div id="tabs-2">
+        </div>
+        <div id="tabs-3">
+            <a href="/checkall">查看所有小说</a>
+        </div>            
+    </div>
+    <script type="text/javascript">
+         $('#tabs').tabs({
+            ajaxOptions: {
+                cache: false,
+                error: function( xhr, status, index, anchor ) {
+                    $( anchor.hash ).html('<div class="ajax_loading"><img src="/static/images/ajax-loader.gif"></div>');
+                }
+            }
+         });
+    </script>
+
+<div class="content_left">
+    <div class="recommend">
+        <h2>实时脱水(只看楼主)</h2>
+        <div class="recommend_form">
+        <form name="recommend">
+            % if source:
+            贴子地址：<input type="text" name="url" autocomplete="off" value="${source}" class="url_input text" /> <input onclick="get_baidu_info()" autocomplete="off" class="blue_btn" type="button" id="recommend_btn" value="实时脱水" />            
+            % else:
+            贴子地址：<input type="text" name="url" autocomplete="off" value="支持baidu贴吧、天涯社区、豆瓣社区" onfocus="if (this.value == '支持baidu贴吧、天涯社区、豆瓣社区') this.value='';this.style.color='black';" style="color: #999" class="url_input text"/> <input onclick="get_baidu_info()" autocomplete="off" class="blue_btn" type="button" id="recommend_btn" value="实时脱水" />
+            % endif
+            <a href="javascript:void(0)" id="cancel_recommend" onclick="cancel_recommend()">取消</a>
+            <ul id="other_info">
+                <li>标题：<input class="text" type="text" name="title" style="width: 240px"/> *</li>
+                <li>作者：<input class="text" type="text" name="author" style="width: 140px"/> *</li>
+                <li>类型：<select name="content_type" style="width: 80px">
+                % for value, name in constants.NOVEL_CONTENT_TYPES_ITEMS:
+                    <option value="${value}">${name}</option>
+                % endfor
+                </select></li>
+                <li>标签：<input class="text" type="text" name="tag"  style="width: 140px"/> 请使用 ; 分割</li>
+                <li><input type="button" autocomplete="off" value="确认脱水" id="post_novel_btn" onclick="post_novel()" class="blue_btn" /> <span class="progress"></span></li>
+            </ul>
+            <div id="error_info"></div>
+        </form>
+        </div>
+    </div>
+    
+    % if source:
+    <script type="text/javascript">
+        get_baidu_info()
+    </script>
+    % endif:
+    
+    <div class="note">
+        <h2>关于这里</h2>
+        <p>
+        本站点仅仅为作者基于为大家服务以及兴趣制作，里面的小说内容均来自<a href="http://tieba.baidu.com">Baidu贴吧</a>、<a href="http://www.tianya.cn">天涯社区</a>、<a href="http://www.douban.com/group/">豆瓣社区</a>，只为方便读者，一切版权归原作者所有。
+        </p>
+        <p>
+            如果你喜欢这里，就把它推荐给你的朋友们吧 :)
+        </p>
+        <p>
+            如果在网站的使用过程中碰到了问题，或者对网站有什么建议的话，欢迎进行<a href="http://www.zlovezl.cn/articles/33/" style="color:red">意见反馈</a>
+        </p>
+    </div>
+    <%doc>
+    <div id="recommend_content">
+    <a href="/checkall" class="recommend_content_more">更多精彩小说&gt;&gt;</a>
+    <h2>推荐阅读</h2>
+        <%include file="changeable/recommends.html" /> 
+    </div>
+    </%doc>
+    <div class="clear"></div>
+    <div class="index_tags_div">
+        <h2>有什么感兴趣的？</h2>
+        <div class="index_tags">
+            % for tag in tags:
+                <span><a href="/novel/search?keyword=${tag.tag | mf.url_quote}">${tag.tag}</a><span>(${tag.count})</span></span>
+            % endfor
+            <%doc>
+            % for i, tag in enumerate(tags):
+                % if i == MAX_TAGS:
+                <a href="javascript: void(0)" id="hidden_tags_a">... ...[显示所有标签]</a>
+                <div id="hidden_tags" style="display: none">
+                % endif
+                <span><a href="/novel/search?keyword=${tag.tag | mf.url_quote}">${tag.tag}</a><span>(${tag.count})</span></span>
+            % endfor
+            % if i >= MAX_TAGS:
+                </div>
+            % endif
+            </%doc>
+        </div>
+    </div>
+</div>
+</%def>

@@ -1,0 +1,45 @@
+<%inherit file="base.html"/>
+
+<%!
+    import urllib
+    from utils.basedb import NovelDB
+    from lib import mako_filter as mf
+%>
+<%def name="right()">
+    <div class="sub_title">查看所有推荐信息</div>
+    <div>
+        <table width="100%" class="common_table" cellspacing="0">
+            <tr>
+                <th>ID</th>
+                <th>标题</th>
+                <th>操作</th>
+                <th>类型</th>
+                <th>标签</th>
+                <th>作者</th>
+                <th>原始地址</th>
+                <th>状态</th>
+                <th>IP</th>
+                <th>推荐人</th>
+                <th>添加时间</th>
+            </tr>
+            % for toshow in toshows:
+            <tr>
+                <td>${toshow.id}</td>
+                <td>${"<span class='gray'>" if toshow.status else "<span>"}${toshow.title}</span></td>
+                <td><a href="./add?rid=${toshow.id}">添加</a></td>
+                <td>${toshow.content_type | mf.trans_content_type}</td>
+                <td>${toshow.tag}</td>
+                <td>${toshow.author}</td>
+                <td><a href="${toshow.url}" target="_blank">点击查看</a></td>
+                <td>${toshow.status}</td>
+                <td>${toshow.ip}</td>
+                <td>${toshow.email}</td>
+                <td>${toshow.jointime.strftime('%Y/%m/%d %H:%M')}</td>
+            </tr>
+            % endfor
+        </table>
+        <div class="pager">
+        ${pager.get_pretty_display()}
+        </div>
+    </div>
+</%def>

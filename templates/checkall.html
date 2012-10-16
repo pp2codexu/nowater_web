@@ -1,0 +1,53 @@
+<%inherit file="base.html"/>
+<%!
+    from lib import mako_filter as mf
+%>
+<%def name="main()">
+    <ul class="types_tab">
+        <li class="current">
+            <a href="/checkall">查看所有小说</a>
+        </li>
+    </ul>
+    <div class="clear"></div>
+    <div class="novels">
+        <table width="100%" class="novels_table" cellspacing="0">
+            <col width="5%"></col>
+            <col></col>
+            <col width="5%"></col>
+            <col></col>
+            <col></col>
+            <col></col>
+            <col></col>
+            <col width="8%"></col>
+            <tr>
+                <th class="tr_number">序号</th>
+                <th>标题</th>
+                <th>类别</th>
+                <th>标签</th>
+                <th>作者</th>
+                <th>上次更新</th>
+                <th>热度</th>
+                <th>添加时间</th>
+            </tr>
+            % for i,toshow in enumerate(toshows):
+            <tr${" class='bg_gray'" if i%2 == 1 else ""}>
+                <td valign="top">${i+1}</td>
+                <td>${toshow.type | mf.get_type_icon }<a href="${toshow.id | mf.get_novel_url}" class="Ntitle">${toshow.title}</a>${"<span class='red'>(已完结)</span>" if toshow.status == 3 else ""}
+                    <p class="summary">
+                        摘要：${toshow.summary}${"..." if len(toshow.summary)==100 else ""}
+                    </p>
+                </td>
+                <td>${toshow.content_type | mf.trans_content_type }</td>
+                <td>${mf.convert_tags(toshow.tag)}</td>
+                <td>${toshow.author}</td>
+                <td>${mf.time_since(toshow.last_update_time) if toshow.last_update_time else "尚未更新"}</td>
+                <td>${toshow.view}</td>
+                <td>${toshow.jointime.strftime('%Y/%m/%d')}</td>
+            </tr>
+            % endfor
+        </table>
+        <div class="pager">
+        ${pager.get_pretty_display()}
+        </div>        
+    </div>
+</%def>

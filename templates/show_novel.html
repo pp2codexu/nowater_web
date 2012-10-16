@@ -1,0 +1,250 @@
+<%!
+    from lib import mako_filter as mf
+    from constants import ADS
+%>
+<%
+    content_count = 0
+%>
+<!doctype html public "-/w3c/dtd html 4.01/en"
+"http://www.w3.org/tr/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="content-Type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Piglei,piglei2007@gmail.com">
+    <meta name="keywords" content="${novel.title} 脱水版 txt下载 ${" ".join(novel.tag)} 最新脱水小说 只看楼主 脱水小说 python web.py">
+    <meta name="description" content="${novel.title}_脱水版 txt下载 (${novel.content_type | mf.trans_content_type}类别) 只看楼主，最新更新内容。来自浮云脱水小说站，每日添加、自动更新的脱水小说站，提供实时脱水（只看楼主）功能" />    
+    <meta http-equiv="content-Type" content="text/html; charset=utf-8" />
+    <title>${novel.title}_脱水版（${pager.page}）_在线阅读_txt下载 | 浮云脱水小说站 - 实时脱水、只看楼主，给你最好最全的脱水小说</title>
+    <link href="/static/css/novel.css?v=4" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/static/js/jquery-1.4.3.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.lazyload.js"></script>
+    <script type="text/javascript" src="/static/js/common.js?v=9"></script>
+    <script type="text/javascript">
+	var CURRENT_PAGE = ${pager.page};
+	var MAX_PAGE = ${pager.maxpage};
+        var HAS_NEXT_PAGE = (CURRENT_PAGE == MAX_PAGE);
+
+        function update_history(){
+            var exist_flag = false;
+            var old_index = -1;
+            if (cookie_value == null) var viewed_list =[];
+            else {
+                var viewed_list = parse_cookie(cookie_value);
+                for (var i=0; i < viewed_list.length; i++){
+                    if (viewed_list[i][0] == ${novel.id}) {
+                        exist_flag = true;
+                        old_index = i;
+                    }
+                }
+            }
+            if (exist_flag) viewed_list.splice(old_index, 1);
+            viewed_list.push([${novel.id},${pager.page},'${novel.title}']);
+            if (viewed_list.length > 12) viewed_list = viewed_list.slice(viewed_list.length - 12);
+            
+            cookie_value = make_cookie(viewed_list);
+            $.cookie('viewed_history', cookie_value,  { expires: 90, path: '/'});
+        }    
+        update_history();
+        
+        $(function(){
+            $("img.lazy").show().lazyload({
+                threshold: 200
+//                effect: "fadeIn"        
+            });
+
+            get_viewed_history();
+            $('a[href="#recommends"]').bind("click", function(){
+                $('#recommends_div').css('border', '2px solid red').fadeOut(200, function(){
+                    $(this).fadeIn('slow');
+                });
+            });
+        % if novel.status == 1:
+            get_progress(${novel.id});
+        % endif
+    	});
+    </script>    
+</head>
+<body>
+    % if novel.status == 1:
+    <div id="novel_progress">正在获取抓取进度...</div>
+    % endif
+    <div id="banner_wrapper">
+        <div id="banner">
+            <h1><a class="b_title" href="/">浮云脱水小说站</a></h1>
+            <div class="banner_info">
+                提供实时更新的百度贴吧、天涯社区、豆瓣社区脱水小说，提供实时脱水（只看楼主）功能<br/>
+                如果你喜欢这，就推荐给你的朋友们吧 :)
+            </div>
+            <div class="b_menu">
+            <form action="/" method="GET">
+                <input type="text" name="source" class="text source" value="请输入帖子地址，支持百度、天涯、豆瓣" onfocus="if (this.value='请输入帖子地址，支持百度、天涯、豆瓣') this.value='';this.style.color='black';"/> <input type="submit" value="实时脱水" class="source_btn"/>
+            </form>
+            </div>
+        </div>    
+    </div>
+    <div class="clear"></div>
+    <div id="main">
+        <div id="left_content">
+            <div class="little_page">${novel.type | mf.get_type_icon }</div>
+            <a href="?page=1" title="回到第一页"><h1>
+		% if u'《' not in novel.title:
+		《${novel.title}》
+		% else:
+		${novel.title}
+		% endif
+		</h1></a>
+        <div class="pager">
+            ${pager.get_pretty_display()}
+        </div>        
+            <div style="padding: 4px">\
+                % for eachline in novel_html:
+                    % if '<div class="content_main">' in eachline:
+                        <% content_count += 1%>
+                        % if content_count == 2:
+                            <div class="ad">
+                                ${ADS["inline"]}
+                            </div>
+                        % endif
+                        % if content_count == 3:
+                            <div class="ad">
+                                ${ADS["inline_2"]}
+                            </div>
+                        % endif
+                    % endif
+                    ${eachline.decode('utf-8', 'ignore') | mf.img_lazyload }\
+                % endfor
+            </div>
+            % if pager.page == pager.maxpage:
+            <div class="last_info">
+                % if novel.status == 3:
+                    <p>[提示]该小说目前已经完结啦，<a href="#recommends">看看其他推荐的</a></p>
+                % endif
+                
+                % if novel.status == 1:
+                    <p>[提示]该小说目前正在由脚本自动更新中，请耐心等待一会会后刷新页面吧 :) <a href="#recommends">看看其他推荐的</a></p>
+                % endif
+                
+                % if novel.status == 2:
+                    <p>[提示]该小说在 <span class="red">${mf.time_since(novel.last_update_time)}</span> 刚刚自动更新过，请等待下一次更新吧 :) <a href="#recommends">看看其他推荐的</a></p>
+                % endif
+            </div>
+            % endif
+            <div class="ad">
+                ${ADS["bottom"]}
+            </div>        
+            <div class="pager">
+                ${pager.get_pretty_display()}
+            </div>
+            <div id="disqus_thread"></div>
+            <script type="text/javascript">
+                if (!($.browser.msie && $.browser.version < 8)) {
+                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+                    var disqus_shortname = 'zhikanlz'; // required: replace example with your forum shortname
+
+                    // The following are highly recommended additional parameters. Remove the slashes in front to use.
+                    var disqus_identifier = '${novel.id}';
+                    var disqus_url = 'http://www.zhikanlz.com${novel.id | mf.get_novel_url}';
+                    var disqus_title = '${novel.title | h}';
+
+                    /* * * DON'T EDIT BELOW THIS LINE * * */
+                    (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                    })();
+                }
+            </script>
+            <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        </div>
+        <div class="right_content">
+            <div class="right_sub_content">
+                <div class="right_content_top">
+                    站内搜索
+                </div>
+                <div class="search_wrapper">
+                    <form action="/novel/search" method="GET">
+                        <input type="text" name="keyword" class="search_key text"/> <input type="submit" value="搜索" />
+                    </form>
+                </div>
+            </div>
+            <div class="right_sub_content">
+                <div class="right_content_top">
+                    小说信息
+                </div>
+                <ul class="right_novel_info">
+                    <li>状态：${novel.status | mf.get_status_display}</li>
+                    <li>作者：${novel.author}
+		    % if novel.type == 'baidu':
+			(<a href="${novel.url}" target="_blank">粉TA</a>)</li>
+		    % endif
+                    <li>热度：${novel.view_count}</li>
+                    <li>类别：${novel.content_type | mf.trans_content_type}</li>
+                    <li>标签：${mf.convert_tags(novel.tag) if novel.tag else u"无"}</li>
+                    <li>添加时间：${mf.time_since(novel.jointime)}</li>
+                    <li>最近更新时间：${mf.time_since(novel.last_update_time) if novel.last_update_time else "初始化中"}</li>
+                    <li id="txt_link">txt下载：
+                        % if novel.status == 1:
+                        <span class="gray">请等待更新完成</span>
+                        <a style="display: none" href="${novel.id | mf.get_novel_txt_url}" onclick="this.innerHTML='请等待...';this.style.color='gray';">点击下载</a>
+                        % else:
+                        <a href="${novel.id | mf.get_novel_txt_url}" onclick="this.innerHTML='请等待...';this.style.color='gray';">点击下载</a>
+                        % endif
+                    </li>
+                    <li>来源地址：<a href="${novel.url}" target="_blank">点击查看</a></li>
+                    <li>最近更新页面：<a href="${novel.last_update_url}" target="_blank">点击查看</a></li>
+                </ul>
+            </div>
+            <div class="right_sub_content" style="padding: 4px 2px">
+                    <!-- JiaThis Button BEGIN -->
+                    <div id="ckepop">
+                        <a href="http://www.jiathis.com/share/?uid=896489" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank">分享</a>
+                        <span class="jiathis_separator">|</span>
+                        <a class="jiathis_button_icons_1"></a>
+                        <a class="jiathis_button_icons_2"></a>
+                        <a class="jiathis_button_icons_3"></a>
+                        <a class="jiathis_button_icons_4"></a>
+                    </div>
+                    <script type="text/javascript" src="http://v2.jiathis.com/code/jia.js?uid=896489" charset="utf-8"></script>
+                    <!-- JiaThis Button END -->
+                    <div class="clear"></div>
+            </div>            
+            <div class="right_sub_content" id="recommends_div">
+                <div class="right_content_top">
+                    小说推荐<a name="recommends"></a>
+                    <a href="/checkall" class="right_content_top_more">更多&gt;&gt;</a>
+                </div>
+                <ul class="right_novels" id="right_novel_recommend">
+                % for rdnovel in rd_recommends:
+                    <li><a title="${rdnovel.title}" href="${rdnovel.id | mf.get_novel_url }">${rdnovel.title}</a></li>
+                % endfor
+                </ul>
+            </div>
+               <div class="right_sub_content ad">
+                     ${ADS["right"]}
+                </div>
+             <div class="right_sub_content">
+                <div class="right_content_top">
+                    您最近浏览过
+                </div>
+                <ul class="right_novels" id="right_novel_history">
+                </ul>
+            </div>            
+        </div>
+        <div class="clear"></div>
+        <div id="footer">
+            <div class="links">
+                <a href="http://www.zlovezl.cn/articles/33/">需求及bug反馈</a> | 
+                <a href="http://www.zlovezl.cn">作者的BLOG</a> | 
+                <a href="http://simple-is-better.com/">python.cn(新闻,招聘,导航)</a> | 
+                <a href="http://www.python.org">Python</a> | 
+                <a href="http://webpy.org">Web.py</a>
+            </div>
+            &copy; 2010 <a href="http://zlovezl.cn" target="_blank">Piglei</a> 浮云脱水小说站. All rights reserved.
+        </div>        
+    </div>
+    <div style="display: none">
+        <script src="http://s17.cnzz.com/stat.php?id=2702233&web_id=2702233" language="JavaScript"></script>
+    </div>    
+</body>
+</html>

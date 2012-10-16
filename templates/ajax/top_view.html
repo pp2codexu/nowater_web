@@ -1,0 +1,12 @@
+<%!
+    from lib import mako_filter
+%>
+<table width="100%" cellspacing="0px" class="top_table">
+    % for i, toshow in enumerate(toshows):
+    <tr>
+        <td width="28px"><div class="rank ${'rank_red' if i < 3 else 'rank_normal'}">${i+1}</div></td>
+        <td><a href="${toshow.id | mako_filter.get_novel_url}" title="${toshow.title}">${toshow.title}</td>
+        <td width="48px" align="right">${toshow.view}</td>
+    </tr>
+    % endfor
+</table>

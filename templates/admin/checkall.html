@@ -1,0 +1,59 @@
+<%inherit file="base.html"/>
+
+<%!
+    from lib import mako_filter as mf
+%>
+<%def name="right()">
+    <div class="sub_title">查看所有小说</div>
+    <div>
+        <table width="100%" class="common_table" cellspacing="0">
+            <tr>
+                <th>ID</th>
+                <th>标题</th>
+                <th>类型</th>
+                <th>标签</th>
+                <th>作者</th>
+                <th>原始地址</th>
+                <th>最近更新url</th>
+                <th>更新间隔</th>
+                <th>上次更新时间</th>
+                <th>上次更新楼层</th>
+                <th>状态</th>
+                <th>修改</th>
+                <th>热度</th>
+                <th>添加时间</th>
+                <th>IP</th>
+                <th>推荐人</th>
+            </tr>
+            % for toshow in toshows:
+            <tr>
+                <td><a href="${toshow.id | mf.get_novel_edit_url }" title="修改">${toshow.id}</a></td>
+                <td>${toshow.type | mf.get_type_icon }<a href="${toshow.id | mf.get_novel_url}" target="_blank"><span class="status_${toshow.status}">${toshow.title}</span></a>${toshow.status | mf.get_status_display}</td>
+                <td>${toshow.content_type | mf.trans_content_type}</td>
+                <td>${mf.convert_tags(toshow.tag)}</td>
+                <td>${toshow.author}</td>
+                <td><a href="${toshow.url}" target="_blank">点击查看</a></td>
+                <td><a href="${toshow.last_update_url}" target="_blank" title="${toshow.last_update_url}">点击查看</a></td>
+                <td>${toshow.update_interval}</td>
+                <td>${mf.time_since(toshow.last_update_time) if toshow.last_update_time else "尚未更新"}</td>
+                <td>${toshow.last_update_floor}</td>
+                <td>${toshow.status}</td>
+                <td>
+                    % if toshow.status == 3:
+                    <a href="/tuoshui_admin/change_status?status=2&id=${toshow.id}">开</a>/<a href="/tuoshui_admin/change_status?status=100&id=${toshow.id}">删</a>
+                    % else:
+                    <a href="/tuoshui_admin/change_status?status=3&id=${toshow.id}">停</a>/<a href="/tuoshui_admin/change_status?status=100&id=${toshow.id}">删</a>                    
+                    % endif
+                </td>
+                <td>${toshow.view}</td>
+                <td>${toshow.jointime.strftime('%Y/%m/%d %H:%M')}</td>
+                <td>${toshow.ip}</td>
+                <td>${toshow.email}</td>
+            </tr>
+            % endfor
+        </table>
+        <div class="pager">
+        ${pager.get_pretty_display()}
+        </div>
+    </div>
+</%def>

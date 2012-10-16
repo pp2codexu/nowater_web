@@ -1,0 +1,22 @@
+<!doctype html public "-/w3c/dtd html 4.01/en"
+"http://www.w3.org/tr/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="content-Type" content="text/html; charset=utf-8" />
+    <link href="/static/css/novel_info.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="wrapper">
+    <div id="main">
+        <div class="info_title">
+            ${novel.title}<a class="b_title" href="javascript:void(0)" onclick="top.location.href='/'">@浮云脱水小说站</a>
+        </div>
+        <div class="litter_info">
+            作者：${novel.author} | <strong><a href="${novel.url}" target="_blank">喜欢就粉TA吧!</a></strong><br/>
+            最近更新时间：${novel.last_update_time.strftime("%m/%d %H:%M") if novel.last_update_time else "初始化中"}<br/>
+            来源地址：<a href="${novel.url}" target="_blank">${novel.url}</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
